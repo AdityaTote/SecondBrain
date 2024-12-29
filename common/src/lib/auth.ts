@@ -1,6 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { genHashPass } from "./hashPass";
+import { genHashPass } from "../utils/hashPass";
 import { User } from "../db/user.model";
 import type { NextAuthOptions } from "next-auth";
 import {  dbConnect } from "@/db";
@@ -118,4 +118,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
   },
+  pages: {
+    signIn: "/signin"
+  }
 };
