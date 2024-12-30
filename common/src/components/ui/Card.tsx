@@ -9,7 +9,7 @@ export default function Card({ children, className }: CardProps) {
   return (
       <div
         className={cn(
-          "bg-white shadow-lg rounded-lg  m-4",
+          "w-full h-full bg-white shadow-lg rounded-lg m-4",
           className
         )}
       >

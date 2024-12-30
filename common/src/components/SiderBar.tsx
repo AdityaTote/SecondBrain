@@ -1,25 +1,25 @@
 "use client";
 import TwitterIcon from "@/icons/TwitterIcon";
-import SideBarCard from "./ui/Card";
 import YoutubeIcon from "@/icons/YoutubeIcon";
 import HashTagIcon from "@/icons/HashTagIcon";
 import MenuIcon from "@/icons/MenuIcon";
 import { useState } from "react";
 import AllContentIcon from "@/icons/AllContentIcon";
 import MiniMenuIcon from "@/icons/MiniMenuIcons";
+import SideComponent from "./ui/SideComponent";
+import MiniSideBarComponent from "./ui/MiniSideBarComponent";
 
 export default function SiderBar() {
-
-  const [menuOpen, setMenuOpen] = useState<boolean>(true);
+  const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   const handleMenu = () => {
     setMenuOpen(!menuOpen);
-  }
+  };
 
   return (
     <div>
-      {menuOpen ? 
-        <div className="w-64 h-screen bg-indigo-50 transition-all duration-500">
+      {menuOpen ? (
+        <div className="w-64 h-screen bg-white transition-all duration-500">
           <div className="flex items-center gap-2 p-2">
             <button onClick={handleMenu}>
               <MenuIcon />
@@ -27,53 +27,27 @@ export default function SiderBar() {
             <div className="text-2xl font-bold text-center p-4">Menu</div>
           </div>
           <div>
-            <SideBarCard className="py-1">
-              <div className="flex items-center gap-1">
-                <AllContentIcon />
-                <div className={`text-md`}>All Content</div>
-              </div>
-            </SideBarCard>
-            <SideBarCard className="py-1">
-              <div className="flex items-center gap-1">
-                <TwitterIcon />
-                <div className={`text-md`}>Twitter</div>
-              </div>
-            </SideBarCard>
-            <SideBarCard className="py-1">
-              <div className="flex items-center gap-1">
-                <YoutubeIcon />
-                <div className={`text-md`}>Youtube</div>
-              </div>
-            </SideBarCard>
-            <SideBarCard className="py-1">
-              <div className="flex items-center gap-1">
-                <HashTagIcon />
-                <div className={`text-md`}>Hash Tags</div>
-              </div>
-            </SideBarCard>
+            <SideComponent text="All Content" Icon={<AllContentIcon/>} />
+            <SideComponent text="Twitter" Icon={<TwitterIcon/>} />
+            <SideComponent text="Youtube" Icon={<YoutubeIcon/>} />
+            <SideComponent text="Hast Tag" Icon={<HashTagIcon/>} />
           </div>
         </div>
-      : <div className="w-14 h-screen bg-indigo-50 transition-all duration-500">
-      <div className="flex items-center justify-center gap-2 p-2">
-        <button onClick={handleMenu}>
-          <MiniMenuIcon />
-        </button>
-      </div>
-      <div>
-        <SideBarCard className="py-1 px-4 flex items-center justify-center">
-            <AllContentIcon />
-        </SideBarCard>
-        <SideBarCard className="py-1 px-4 flex items-center justify-center">
-            <TwitterIcon />
-        </SideBarCard>
-        <SideBarCard className="py-1 px-4 flex items-center justify-center">
-            <YoutubeIcon />
-        </SideBarCard>
-        <SideBarCard className="py-1 px-4 flex items-center justify-center">
-            <HashTagIcon />
-        </SideBarCard>
-      </div>
-    </div> }
+      ) : (
+        <div className="w-14 h-screen bg-white transition-all duration-500">
+          <div className="flex items-center justify-center gap-2 px-2 pt-6">
+            <button onClick={handleMenu}>
+              <MiniMenuIcon />
+            </button>
+          </div>
+          <div className="pt-4">
+           <MiniSideBarComponent Icon={<AllContentIcon />} />
+           <MiniSideBarComponent Icon={<TwitterIcon />} />
+           <MiniSideBarComponent Icon={<YoutubeIcon />} />
+           <MiniSideBarComponent Icon={<HashTagIcon />} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

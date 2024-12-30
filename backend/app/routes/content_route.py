@@ -5,7 +5,7 @@ from app.service.tags_service import TagsService
 
 content_bp= Blueprint('content', __name__)
 
-@content_bp.route('/content', methods=['GET', 'POST', 'DELETE'])
+@content_bp.route('/', methods=['GET', 'POST', 'DELETE'])
 @auth
 def content():
     if request.method == 'GET':

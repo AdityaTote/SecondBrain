@@ -50,7 +50,7 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen bg-gray-100">
       <Card className="p-2">
         <div className="flex justify-center items-center p-2">
           <h1 className="text-2xl font-semibold">SignIn</h1>
@@ -77,7 +77,7 @@ export default function SignInPage() {
           <Button onClick={handleSignUp}>Sign in</Button>
           <Button
             onClick={handleGoogleSignin}
-            className="bg-blue-700 hover:bg-blue-800  flex items-center justify-center gap-2"
+            className="bg-slate-100 text-black hover:bg-gray-400  flex items-center justify-center gap-2"
           >
             <div className="size-6">
               <GoogleIcon />

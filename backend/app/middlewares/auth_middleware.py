@@ -14,7 +14,7 @@ def auth(f: Callable) -> Callable:
     @wraps(f)
     def dec_fn(*args, **kwargs):
         
-        user_id = request.json['user_id']
+        user_id = request.json['userId']
 
         if not user_id:
             return jsonify({
