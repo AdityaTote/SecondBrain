@@ -77,7 +77,7 @@ export default function SignInPage() {
           <Button onClick={handleSignUp}>Sign in</Button>
           <Button
             onClick={handleGoogleSignin}
-            className="bg-blue-500 hover:bg-blue-700 flex items-center justify-center gap-2"
+            className="bg-blue-700 hover:bg-blue-800  flex items-center justify-center gap-2"
           >
             <div className="size-6">
               <GoogleIcon />

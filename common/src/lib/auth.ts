@@ -1,6 +1,6 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { genHashPass } from "../utils/hashPass";
+import { compareHashPass, genHashPass } from "../utils/hashPass";
 import { User } from "../db/user.model";
 import type { NextAuthOptions } from "next-auth";
 import {  dbConnect } from "@/db";
@@ -39,6 +39,13 @@ export const authOptions: NextAuthOptions = {
           const userExist = await User.findOne({ email });
 
           if (userExist) {
+
+            const isMatch = await compareHashPass(password, userExist.password);
+
+            if(!isMatch){
+              return null;
+            }
+
             return {
               id: userExist._id.toString(),
               username: userExist.username,

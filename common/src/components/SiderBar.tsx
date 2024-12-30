@@ -5,6 +5,8 @@ import YoutubeIcon from "@/icons/YoutubeIcon";
 import HashTagIcon from "@/icons/HashTagIcon";
 import MenuIcon from "@/icons/MenuIcon";
 import { useState } from "react";
+import AllContentIcon from "@/icons/AllContentIcon";
+import MiniMenuIcon from "@/icons/MiniMenuIcons";
 
 export default function SiderBar() {
 
@@ -25,6 +27,12 @@ export default function SiderBar() {
             <div className="text-2xl font-bold text-center p-4">Menu</div>
           </div>
           <div>
+            <SideBarCard className="py-1">
+              <div className="flex items-center gap-1">
+                <AllContentIcon />
+                <div className={`text-md`}>All Content</div>
+              </div>
+            </SideBarCard>
             <SideBarCard className="py-1">
               <div className="flex items-center gap-1">
                 <TwitterIcon />
@@ -48,10 +56,13 @@ export default function SiderBar() {
       : <div className="w-14 h-screen bg-indigo-50 transition-all duration-500">
       <div className="flex items-center justify-center gap-2 p-2">
         <button onClick={handleMenu}>
-          <MenuIcon />
+          <MiniMenuIcon />
         </button>
       </div>
       <div>
+        <SideBarCard className="py-1 px-4 flex items-center justify-center">
+            <AllContentIcon />
+        </SideBarCard>
         <SideBarCard className="py-1 px-4 flex items-center justify-center">
             <TwitterIcon />
         </SideBarCard>
