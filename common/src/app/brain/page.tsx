@@ -7,7 +7,7 @@ export default function SignInPage() {
       <div className="fixed top-12 left-0">
         <SiderBar />
       </div>
-      <div className="pl-14 pt-20">
+      <div className="pl-14 pt-20 flex">
         <ContentCard
         id="1"
         title="youtube"
