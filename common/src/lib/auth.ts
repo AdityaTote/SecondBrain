@@ -4,6 +4,7 @@ import { compareHashPass, genHashPass } from "../utils/hashPass";
 import { User } from "../db/user.model";
 import type { NextAuthOptions } from "next-auth";
 import {  dbConnect } from "@/db";
+import { loginSchema } from "./schema";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -25,15 +26,23 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         try {
           await dbConnect();
-          const username = credentials?.username as string;
-          const email = credentials?.email as string;
-          const password = credentials?.password as string;
+          const cred = loginSchema.safeParse(credentials);
+
+          if (!cred.success) {
+            return null;
+          }
+
+          const {username, email, password} = cred.data;
+          // const username = credentials?.username as string;
+          // const email = credentials?.email as string;
+          // const password = credentials?.password as string;
 
           console.log(username, email, password);
 
           if (!email || !password || !username) {
             return null;
           }
+          
           const hashPass = await genHashPass(password);
 
           const userExist = await User.findOne({ email });

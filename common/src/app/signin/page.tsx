@@ -19,6 +19,7 @@ export default function SignInPage() {
     const username = usernameRef.current?.value;
     const email = emailRef.current?.value;
     const password = passRef.current?.value;
+    
     if (!username || !email || !password) {
       alert("Please fill all the fields");
       return;

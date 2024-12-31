@@ -1,7 +1,7 @@
 import ContentCard from "@/components/ContentCard";
 import SiderBar from "@/components/SiderBar";
 
-export default function SignInPage() {
+export default function BrainPage() {
   return (
     <div className="bg-gray-100 h-screen w-screen">
       <div className="fixed top-12 left-0">
