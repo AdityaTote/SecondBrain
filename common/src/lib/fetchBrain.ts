@@ -4,7 +4,6 @@ const backendURL = "http://127.0.0.1:8000"
 
 export  async function fetchBrain({ userId }: { userId: string }) {
   try {
-    console.log("hi")
     console.log(userId)
     const res = await axios.get(`${backendURL}/api/content`, {
       headers: {
