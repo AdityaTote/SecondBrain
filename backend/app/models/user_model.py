@@ -9,13 +9,14 @@ class User(BaseDocument):
     password = StringField(min_length=6, max_length=50)
 
     meta = {
-        "collections": "users",
+        "collection": "users",
         "indexes": [
             {
                 "fields": ["email", "username"],
                 "unique": True
             }
-        ]
+        ],
+         'strict': False
     }
 
     def set_password(self, password):

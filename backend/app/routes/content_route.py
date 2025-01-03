@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, g
 from app.middlewares.auth_middleware import auth
 from app.service.content_service import ContentService
 from app.service.tags_service import TagsService
+from app.models.user_model import User
 
 content_bp= Blueprint('content', __name__)
 
@@ -19,6 +20,15 @@ def content():
         
         try:
             content = ContentService.get_content_by_user_id(user_id=user_id)
+            # resData = {
+            #     "id": content["id"]["$oid"],
+            #     "title": content["title"],
+            #     "types": content["types"],
+            #     "tags": content["tags"],
+            #     "link": content["link"],
+            #     "user_id": content["user_id"]["$oid"],
+            #     "created_at": content["created_at"]["$date"],
+            # }
             return jsonify({
                 'message': 'Content retrieved successfully',
                 'data': content
@@ -61,7 +71,7 @@ def content():
         try:
             content = ContentService.create_content(
                 title=title,
-                types=types.upper(),
+                types=types,
                 tags=tag_ids,
                 user_id=user_id,
                 link=link

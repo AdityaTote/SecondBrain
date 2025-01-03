@@ -1,18 +1,17 @@
 from app.models.content_model import Content
+from app.models.content_model import Types
 
 class ContentService:
 
     @staticmethod
     def create_content(title, types, tags, user_id, link):
 
-        if types.upper() not in ["YOUTUBE", "TWITTER", "INSTAGRAM", "TEXT"]:
-            return ("Invalid type")
 
         if link:
             content = Content(
             title=title,
             link=link,
-            types=types.upper(),
+            types=types,
             tags=tags,
             user_id=user_id
             )

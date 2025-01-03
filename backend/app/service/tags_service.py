@@ -20,6 +20,10 @@ class TagsService:
         return Tags.objects().all()
     
     @staticmethod
+    def get_by_Id(id):
+        return Tags.objects().get(id=id)
+    
+    @staticmethod
     def get_tag_by_title(title):
         return Tags.objects(title=title).first()
     

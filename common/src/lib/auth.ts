@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { compareHashPass, genHashPass } from "../utils/hashPass";
 import { User } from "../db/user.model";
 import type { NextAuthOptions } from "next-auth";
-import {  dbConnect } from "@/db";
+import { dbConnect } from "@/db";
 import { loginSchema } from "./schema";
 
 export const authOptions: NextAuthOptions = {
@@ -32,26 +32,23 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          const {username, email, password} = cred.data;
+          const { username, email, password } = cred.data;
           // const username = credentials?.username as string;
           // const email = credentials?.email as string;
           // const password = credentials?.password as string;
 
-          console.log(username, email, password);
-
           if (!email || !password || !username) {
             return null;
           }
-          
+
           const hashPass = await genHashPass(password);
 
           const userExist = await User.findOne({ email });
 
           if (userExist) {
-
             const isMatch = await compareHashPass(password, userExist.password);
 
-            if(!isMatch){
+            if (!isMatch) {
               return null;
             }
 
@@ -89,22 +86,20 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async signIn({ account, profile, user }) {
+    async signIn({ account, profile }) {
       if (account?.provider === "google") {
         try {
           await dbConnect();
           const userExist = await User.findOne({ email: profile?.email });
-          console.log(`Account: ${JSON.stringify(account)}`)
-          console.log(`Profile: ${JSON.stringify(profile)}`)
-          console.log(`User: ${JSON.stringify(user)}`)
-          console.log(`Profile pic: ${profile?.image}`)
-
           if (!userExist) {
-            const newUser = await User.create({
+            const data = {
               username: profile?.name,
               email: profile?.email,
-              profilePic: profile?.image || "",
-            });
+            }
+            if(profile?.image){
+              data.profilePic = profile?.image;
+            }
+            const newUser = await User.create(data);
 
             if (!newUser) {
               return false;
@@ -135,6 +130,6 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/signin"
-  }
+    signIn: "/signin",
+  },
 };
