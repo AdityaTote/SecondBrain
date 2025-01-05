@@ -7,7 +7,6 @@ import { authOptions } from "@/lib/auth"
 
 const getBrain = async () => {
   const session: SessionType = await getServerSession(authOptions);
-  console.log('s: ',session)
   const userId = session?.user.id || ""; 
   const data: BrainContent[] = await fetchBrain({userId: userId});
   return data

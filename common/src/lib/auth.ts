@@ -1,9 +1,9 @@
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { compareHashPass, genHashPass } from "../utils/hashPass";
-import { User } from "../db/user.model";
 import type { NextAuthOptions } from "next-auth";
 import { dbConnect } from "@/db";
+import { compareHashPass, genHashPass } from "@/utils/hashPass";
+import { User } from "@/db/user.model";
 import { loginSchema } from "./schema";
 
 
