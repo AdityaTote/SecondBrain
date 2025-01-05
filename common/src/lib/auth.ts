@@ -6,6 +6,12 @@ import type { NextAuthOptions } from "next-auth";
 import { dbConnect } from "@/db";
 import { loginSchema } from "./schema";
 
+// interface CustomToken {
+//   id: string;
+//   email: string;
+//   username: string;
+// }
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -86,25 +92,39 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async signIn({ account, profile }) {
-      if (account?.provider === "google") {
+    async signIn({ account, profile, user }) {
+      if (account?.provider === "google" && profile?.email) {
         try {
           await dbConnect();
-          const userExist = await User.findOne({ email: profile?.email });
+          if (!user.name || !user.email || !user.image) {
+            return false;
+          }
+          const username = user.name.replace(" ","") || user.email.split("@")[0];
+          const userExist = await User.findOne({ email: user.email });
+
           if (!userExist) {
-            const data = {
-              username: profile?.name,
-              email: profile?.email,
-            }
-            if(profile?.image){
-              data.profilePic = profile?.image;
-            }
-            const newUser = await User.create(data);
+            const userData = {
+              username: username,
+              email: profile.email,
+              profile_picture: user.image,
+            };
+
+            const newUser = await User.create(userData);
 
             if (!newUser) {
               return false;
             }
+
+            account.userId = newUser._id.toString();
+            account.username = newUser.username;
+            account.email = newUser.email;
+            return true;
           }
+
+          account.userId = userExist._id.toString();
+          account.username = userExist.username;
+          account.email = userExist.email;
+          return true;
         } catch (error) {
           console.error("Error during Google sign in:", error);
           return false;
@@ -112,21 +132,27 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async session({ session, token }) {
-      session.user.id = token.id as string;
-      session.user.email = token.email as string;
-      session.user.username = token.username as string;
-      return session;
-    },
-    async jwt({ token, user }) {
-      if (user) {
+    async jwt({ token, account, user }) {
+      if (account?.provider === "google") {
+        token.id = account.userId;
+        token.username = account.username;
+        token.email = account.email as string;
+      } else if (user) {
         token.id = user.id;
         token.email = user.email;
-        if ("username" in user) {
-          token.username = user.username;
-        }
+        token.username = "username" in user ? user.username : token.username;
       }
       return token;
+    },
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          id: token.id,
+          username: token.username,
+          email: token.email,
+        },
+      };
     },
   },
   pages: {
