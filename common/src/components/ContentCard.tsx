@@ -4,7 +4,7 @@ import BinIcon from "@/icons/BinIcon";
 import YoutubeIcon from "@/icons/YoutubeIcon";
 import Tags from "./ui/Tags";
 import Link from "next/link";
-import { getTagTitle } from "@/lib/fetchBrain";
+import { getTagTitle } from "@/lib/fetchData";
 
 interface ContentProp {
   id: string;
@@ -15,10 +15,16 @@ interface ContentProp {
   date: string;
 }
 
-export default function ContentCard({ title, link, type, tags, date }: ContentProp) {
+export default function ContentCard({
+  title,
+  link,
+  type,
+  tags,
+  date,
+}: ContentProp) {
   const strToDate = new Date(date);
   const day = String(strToDate.getUTCDate()).padStart(2, "0");
-  const month = String(strToDate.getUTCMonth()+1).padStart(2, "0");
+  const month = String(strToDate.getUTCMonth() + 1).padStart(2, "0");
   const year = strToDate.getUTCFullYear();
   const formatedDate = `${day}/${month}/${year}`;
   return (
