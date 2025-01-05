@@ -4,6 +4,7 @@ interface UserType {
   id: string;
   username: string;
   email: string;
+  token: string;
 }
 
 declare module "next-auth" {
@@ -17,6 +18,7 @@ interface Session {
     id: string;
     username: string;
     email: string;
+    token: string;
   };
 }
 

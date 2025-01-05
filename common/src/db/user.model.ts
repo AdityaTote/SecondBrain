@@ -9,6 +9,11 @@ const userSchema = new Schema({
     required: true,
   },
   password: String,
+  token: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   created_at: {
     type: Date,
     default: Date.now(),

@@ -5,7 +5,7 @@ import { dbConnect } from "@/db";
 import { compareHashPass, genHashPass } from "@/utils/hashPass";
 import { User } from "@/db/user.model";
 import { loginSchema } from "./schema";
-
+import { generateJWT } from "@/utils/jwt";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -34,9 +34,6 @@ export const authOptions: NextAuthOptions = {
           }
 
           const { username, email, password } = cred.data;
-          // const username = credentials?.username as string;
-          // const email = credentials?.email as string;
-          // const password = credentials?.password as string;
 
           if (!email || !password || !username) {
             return null;
@@ -53,27 +50,70 @@ export const authOptions: NextAuthOptions = {
               return null;
             }
 
-            return {
+            const payload = {
               id: userExist._id.toString(),
-              username: userExist.username,
               email: userExist.email,
+              username: userExist.username,
+            };
+
+            const token = generateJWT(payload);
+
+            const user = await User.findOneAndUpdate(
+              {
+                _id: userExist._id.toString(),
+              },
+              {
+                $set: {
+                  token: token,
+                },
+              },
+              { new: true }
+            );
+
+            return {
+              id: user._id.toString(),
+              username: user.username,
+              email: user.email,
+              token: user.token,
             };
           }
 
-          const user = await User.create({
+          const newUser = await User.create({
             username: username,
             email: email,
             password: hashPass,
+            token: "",
           });
 
-          if (!user) {
+          if (!newUser) {
             return null;
           }
+
+          const payload = {
+            id: newUser._id.toString(),
+            email: newUser.email,
+            username: newUser.username,
+          };
+
+          const token = generateJWT(payload);
+
+          const user = await User.findOneAndUpdate(
+            {
+              _id: newUser._id.toString(),
+            },
+            {
+              $set: {
+                token: token,
+              },
+            },
+            { new: true }
+          );
 
           return {
             id: user._id.toString(),
             username: user.username,
             email: user.email,
+            token: user.token,
           };
         } catch (e) {
           console.log(e);
@@ -94,7 +134,8 @@ export const authOptions: NextAuthOptions = {
           if (!user.name || !user.email || !user.image) {
             return false;
           }
-          const username = user.name.replace(" ","") || user.email.split("@")[0];
+          const username =
+            user.name.replace(" ", "") || user.email.split("@")[0];
           const userExist = await User.findOne({ email: user.email });
 
           if (!userExist) {
@@ -102,23 +143,66 @@ export const authOptions: NextAuthOptions = {
               username: username,
               email: profile.email,
               profile_picture: user.image,
+              token: account.access_token,
             };
 
             const newUser = await User.create(userData);
+
+            const payload = {
+              id: newUser._id.toString(),
+              email: newUser.email,
+              username: newUser.username,
+            };
+
+            const token = generateJWT(payload);
+
+            const updateToken = await User.findOneAndUpdate(
+              {
+                _id: userExist._id.toString(),
+              },
+              {
+                $set: {
+                  token: token,
+                },
+              },
+              { new: true }
+            );
 
             if (!newUser) {
               return false;
             }
 
-            account.userId = newUser._id.toString();
-            account.username = newUser.username;
-            account.email = newUser.email;
+            account.userId = updateToken._id.toString();
+            account.username = updateToken.username;
+            account.email = updateToken.email;
+            account.token = updateToken.token;
             return true;
           }
 
-          account.userId = userExist._id.toString();
-          account.username = userExist.username;
-          account.email = userExist.email;
+          const payload = {
+            id: userExist._id.toString(),
+            email: userExist.email,
+            username: userExist.username,
+          };
+
+          const token = generateJWT(payload);
+
+          const updateToken = await User.findOneAndUpdate(
+            {
+              _id: userExist._id.toString(),
+            },
+            {
+              $set: {
+                token: token,
+              },
+            },
+            { new: true }
+          );
+
+          account.userId = updateToken._id.toString();
+          account.username = updateToken.username;
+          account.email = updateToken.email;
+          account.token = updateToken.token;
           return true;
         } catch (error) {
           console.error("Error during Google sign in:", error);
@@ -132,10 +216,12 @@ export const authOptions: NextAuthOptions = {
         token.id = account.userId;
         token.username = account.username;
         token.email = account.email as string;
+        token.token = account.access_token;
       } else if (user) {
         token.id = user.id;
         token.email = user.email;
         token.username = "username" in user ? user.username : token.username;
+        token.token = "token" in user ? user.token : token.token;
       }
       return token;
     },
@@ -146,6 +232,7 @@ export const authOptions: NextAuthOptions = {
           id: token.id,
           username: token.username,
           email: token.email,
+          token: token.token,
         },
       };
     },

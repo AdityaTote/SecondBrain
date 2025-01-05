@@ -2,13 +2,13 @@ import axios from "axios";
 
 const backendURL = "http://127.0.0.1:8000"
 
-export  async function fetchBrain({ userId }: { userId: string }) {
+export  async function fetchBrain({ token }: { token: string }) {
   try {
-    console.log(userId)
+    console.log(token)
     const res = await axios.get(`${backendURL}/api/content`, {
       headers: {
         "Content-Type": "application/json",
-        "User-Id": "6777fc8bf227cb9ea91cdf20",
+        "Authorization": `Bearer ${token}`,
       },
     });
     if(!res.data.data){
@@ -35,5 +35,22 @@ export  async function getTagTitle(tagId: string){
     } catch (error) {
       console.error(error)
     }
+}
 
+export  async function fetchCheck({ token }: { token: string }) {
+  try {
+    console.log(token)
+    const res = await axios.get(`${backendURL}/api/content/check`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+    if(!res.data.data){
+      return null;
+    }
+    return res.data.data;
+  } catch (error) {
+    console.error(error);
+  }
 }

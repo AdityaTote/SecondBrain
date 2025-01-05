@@ -112,3 +112,13 @@ def content():
             }),203
         except Exception as e:
             return jsonify({'error': str(e)}), 400
+
+
+@content_bp.route("/check", methods=["GET"])
+@auth
+def check():
+    data = g.user_id
+    return jsonify({
+        'message': 'User is authenticated',
+        'data': data
+    })

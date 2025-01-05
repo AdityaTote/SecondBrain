@@ -1,7 +1,21 @@
+import jwt
+import os
 from flask import request, jsonify, g
 from functools import wraps
 from typing import Callable
 from app.service.user_service import UserService
+
+def decode_token(token: str):
+    secret_key = os.getenv("NEXTAUTH_SECRET", "secret")
+    data = jwt.decode(token, secret_key, algorithms=["HS256"])
+
+    if not data:
+        return {
+            "error": "Invalid token",
+            "message": "The token provided is invalid"
+        }
+
+    return data
 
 def check_user_exists(user_id: str) -> bool:
     try:
@@ -14,21 +28,31 @@ def auth(f: Callable) -> Callable:
     @wraps(f)
     def dec_fn(*args, **kwargs):
         
-        user_id = request.headers.get('User-Id')
+        auth_header = request.headers.get('Authorization')
 
-        if not user_id:
+        if not auth_header or not auth_header.startswith('Bearer '):
             return jsonify({
-                'error': 'User ID is required',
-                'message': 'Please provide a user_id in the request'
-            }), 400
+                'error': 'Unauthorized',
+                'message': 'Token not provided or invalid format'
+            }), 401
         
-        if not check_user_exists(user_id):
+        token = auth_header[7:]
+
+        data = decode_token(token)
+
+        if not data:
+            return jsonify({
+                'error': 'Unauthorized',
+                'message': 'Invalid token'
+            }), 401
+        
+        if not check_user_exists(data.id):
             return jsonify({
                 'error': 'User not found',
                 'message': 'The user_id provided does not exist'
             }), 404
         
-        g.user_id = user_id
+        g.user_id = data.id
 
         return f(*args, **kwargs)
     
