@@ -6,11 +6,6 @@ import type { NextAuthOptions } from "next-auth";
 import { dbConnect } from "@/db";
 import { loginSchema } from "./schema";
 
-// interface CustomToken {
-//   id: string;
-//   email: string;
-//   username: string;
-// }
 
 export const authOptions: NextAuthOptions = {
   providers: [
