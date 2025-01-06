@@ -39,7 +39,6 @@ export  async function getTagTitle(tagId: string){
 
 export  async function fetchCheck({ token }: { token: string }) {
   try {
-    console.log(token)
     const res = await axios.get(`${backendURL}/api/content/check`, {
       headers: {
         "Content-Type": "application/json",

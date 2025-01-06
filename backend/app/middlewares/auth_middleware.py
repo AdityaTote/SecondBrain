@@ -46,13 +46,13 @@ def auth(f: Callable) -> Callable:
                 'message': 'Invalid token'
             }), 401
         
-        if not check_user_exists(data.id):
+        if not check_user_exists(data["id"]):
             return jsonify({
                 'error': 'User not found',
                 'message': 'The user_id provided does not exist'
             }), 404
         
-        g.user_id = data.id
+        g.user_id = data["id"]
 
         return f(*args, **kwargs)
     

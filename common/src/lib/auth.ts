@@ -7,6 +7,17 @@ import { User } from "@/db/user.model";
 import { loginSchema } from "./schema";
 import { generateJWT } from "@/utils/jwt";
 
+function randomStringGen(length: number) {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    result += chars[randomIndex];
+  }
+  return result;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     GoogleProvider({
@@ -82,7 +93,7 @@ export const authOptions: NextAuthOptions = {
             username: username,
             email: email,
             password: hashPass,
-            token: "",
+            token: randomStringGen(10),
           });
 
           if (!newUser) {
@@ -127,8 +138,8 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async signIn({ account, profile, user }) {
-      if (account?.provider === "google" && profile?.email) {
+    async signIn({ account, user }) {
+      if (account?.provider === "google" && user) {
         try {
           await dbConnect();
           if (!user.name || !user.email || !user.image) {
@@ -141,9 +152,9 @@ export const authOptions: NextAuthOptions = {
           if (!userExist) {
             const userData = {
               username: username,
-              email: profile.email,
+              email: user.email,
               profile_picture: user.image,
-              token: account.access_token,
+              token: randomStringGen(10),
             };
 
             const newUser = await User.create(userData);
@@ -158,7 +169,7 @@ export const authOptions: NextAuthOptions = {
 
             const updateToken = await User.findOneAndUpdate(
               {
-                _id: userExist._id.toString(),
+                _id: newUser._id.toString(),
               },
               {
                 $set: {
@@ -216,7 +227,7 @@ export const authOptions: NextAuthOptions = {
         token.id = account.userId;
         token.username = account.username;
         token.email = account.email as string;
-        token.token = account.access_token;
+        token.token = account.token;
       } else if (user) {
         token.id = user.id;
         token.email = user.email;
