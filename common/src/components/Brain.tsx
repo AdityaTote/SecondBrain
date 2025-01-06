@@ -4,10 +4,16 @@ import SiderBar from "./SiderBar";
 import { BrainContent, SessionType } from "@/types/types";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import BrainHeader from "./BrainHeader";
+
+const getUser = async () => {
+  const session: SessionType = await getServerSession(authOptions);
+  return session?.user;
+};
 
 const getBrain = async () => {
-  const session: SessionType = await getServerSession(authOptions);
-  const token = session?.user.token || "";
+  const user = await getUser();
+  const token = user?.token || "";
   const {
     error,
     message,
@@ -37,35 +43,41 @@ export default async function Brain() {
   }
 
   if (error === false && data !== null) {
+    const user = await getUser();
     return (
       <div className="bg-gray-100 h-screen w-screpageen">
         <div className="fixed top-0 left-0">
           <SiderBar />
         </div>
-        <div className="pl-14 pt-6 flex">
-          {data && data.length > 0 ? (
-            data.map((content: BrainContent) => {
-              const contentId =
-                content._id?.$oid.toString() || content._id.toString();
+        <div className="pl-14 pt-6">
+          <BrainHeader username={user?.username ?? 'No One'} />
+          <div className="flex">
+            {data && data.length > 0 ? (
+              data.map((content: BrainContent) => {
+                const contentId =
+                  content._id?.$oid.toString() || content._id.toString();
 
-              const tags = Array.isArray(content.tags) ? content.tags : [];
-              const createdAt = content.created_at["$date"].toString();
+                const tags = Array.isArray(content.tags) ? content.tags : [];
+                const createdAt = content.created_at["$date"].toString();
 
-              return (
-                <ContentCard
-                  key={contentId || ""}
-                  id={contentId || ""}
-                  title={content.title || "Untitled"}
-                  link={content.link}
-                  tags={tags}
-                  type={content.types}
-                  date={createdAt}
-                />
-              );
-            })
-          ) : (
-            <h1>No data</h1>
-          )}
+                return (
+                  <ContentCard
+                    key={contentId || ""}
+                    id={contentId || ""}
+                    title={content.title || "Untitled"}
+                    link={content.link}
+                    tags={tags}
+                    type={content.types}
+                    date={createdAt}
+                  />
+                );
+              })
+            ) : (
+              <div className="w-screen h-screen flex justify-center items-center">
+                <h1>No Content</h1>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
