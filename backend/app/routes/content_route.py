@@ -20,21 +20,16 @@ def content():
         
         try:
             content = ContentService.get_content_by_user_id(user_id=user_id)
-            # resData = {
-            #     "id": content["id"]["$oid"],
-            #     "title": content["title"],
-            #     "types": content["types"],
-            #     "tags": content["tags"],
-            #     "link": content["link"],
-            #     "user_id": content["user_id"]["$oid"],
-            #     "created_at": content["created_at"]["$date"],
-            # }
+
             return jsonify({
                 'message': 'Content retrieved successfully',
                 'data': content
             }),200
         except Exception as e:
-            return jsonify({'error': str(e)}), 400
+            return jsonify({
+                'error': str(e),
+                'message': 'An error occurred while retrieving content'
+                }), 400
 
     if request.method == 'POST':
         user_id = g.user_id

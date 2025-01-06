@@ -89,11 +89,13 @@ export const authOptions: NextAuthOptions = {
             };
           }
 
+          const tempToken = randomStringGen(10)
+
           const newUser = await User.create({
             username: username,
             email: email,
             password: hashPass,
-            token: randomStringGen(10),
+            token: tempToken,
           });
 
           if (!newUser) {
@@ -166,6 +168,7 @@ export const authOptions: NextAuthOptions = {
             };
 
             const token = generateJWT(payload);
+            console.log(token)
 
             const updateToken = await User.findOneAndUpdate(
               {
@@ -178,11 +181,11 @@ export const authOptions: NextAuthOptions = {
               },
               { new: true }
             );
-
+            
             if (!newUser) {
               return false;
             }
-
+            
             account.userId = updateToken._id.toString();
             account.username = updateToken.username;
             account.email = updateToken.email;
@@ -197,6 +200,7 @@ export const authOptions: NextAuthOptions = {
           };
 
           const token = generateJWT(payload);
+          console.log(token)
 
           const updateToken = await User.findOneAndUpdate(
             {
