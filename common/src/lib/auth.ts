@@ -89,7 +89,7 @@ export const authOptions: NextAuthOptions = {
             };
           }
 
-          const tempToken = randomStringGen(10)
+          const tempToken = randomStringGen(10);
 
           const newUser = await User.create({
             username: username,
@@ -144,35 +144,35 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "google" && user) {
         try {
           await dbConnect();
-          if (!user.name || !user.email || !user.image) {
+          if (user.email === null || user.name === null) {
             return false;
           }
+          const email = user.email as string;
           const username =
-            user.name.replace(" ", "") || user.email.split("@")[0];
-          const userExist = await User.findOne({ email: user.email });
-
+            (user.name?.replace(" ", "") as string) ||
+            (user.email?.split("@")[0] as string);
+          const profileImage = (user.image as string) || "";
+          const userExist = await User.findOne({ email: email });
           if (!userExist) {
-            const userData = {
+            const tempToken = randomStringGen(20);
+            const newUser = await User.create({
               username: username,
-              email: user.email,
-              profile_picture: user.image,
-              token: randomStringGen(10),
-            };
-
-            const newUser = await User.create(userData);
-
+              email: email,
+              profileImage: profileImage,
+              token: tempToken,
+            });
+            if (!newUser) {
+              return false;
+            }
             const payload = {
               id: newUser._id.toString(),
               email: newUser.email,
               username: newUser.username,
             };
-
             const token = generateJWT(payload);
-            console.log(token)
-
-            const updateToken = await User.findOneAndUpdate(
+            const updatedToken = await User.findOneAndUpdate(
               {
-                _id: newUser._id.toString(),
+                _id: newUser._id,
               },
               {
                 $set: {
@@ -181,18 +181,17 @@ export const authOptions: NextAuthOptions = {
               },
               { new: true }
             );
-            
-            if (!newUser) {
+
+            if (!updatedToken) {
               return false;
             }
-            
-            account.userId = updateToken._id.toString();
-            account.username = updateToken.username;
-            account.email = updateToken.email;
-            account.token = updateToken.token;
+
+            account.userId = updatedToken._id.toString();
+            account.username = updatedToken.username;
+            account.email = updatedToken.email;
+            account.token = updatedToken.token;
             return true;
           }
-
           const payload = {
             id: userExist._id.toString(),
             email: userExist.email,
@@ -200,11 +199,10 @@ export const authOptions: NextAuthOptions = {
           };
 
           const token = generateJWT(payload);
-          console.log(token)
 
-          const updateToken = await User.findOneAndUpdate(
+          const updatedToken = await User.findOneAndUpdate(
             {
-              _id: userExist._id.toString(),
+              _id: userExist._id,
             },
             {
               $set: {
@@ -214,10 +212,14 @@ export const authOptions: NextAuthOptions = {
             { new: true }
           );
 
-          account.userId = updateToken._id.toString();
-          account.username = updateToken.username;
-          account.email = updateToken.email;
-          account.token = updateToken.token;
+          if (!updatedToken) {
+            return false;
+          }
+
+          account.userId = updatedToken._id.toString();
+          account.username = updatedToken.username;
+          account.email = updatedToken.email;
+          account.token = updatedToken.token;
           return true;
         } catch (error) {
           console.error("Error during Google sign in:", error);
