@@ -1,8 +1,8 @@
 import ShareIcon from "@/icons/ShareIcon";
-import Card from "./ui/Card";
+import Card from "../ui/Card";
 import BinIcon from "@/icons/BinIcon";
 import YoutubeIcon from "@/icons/YoutubeIcon";
-import Tags from "./ui/Tags";
+import Tags from "../ui/Tags";
 import Link from "next/link";
 import { getTagTitle } from "@/lib/fetchData";
 

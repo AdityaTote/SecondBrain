@@ -1,4 +1,4 @@
-import Brain from "@/components/Brain";
+import Brain from "@/components/brain/Brain";
 import { Redirect } from "@/components/Redirect";
 import { SessionType } from "@/types/types";
 import { getServerSession } from "next-auth";

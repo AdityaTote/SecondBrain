@@ -1,6 +1,6 @@
 import { DefaultSession } from "next-auth";
 
-interface UserType {
+export interface UserType {
   id: string;
   username: string;
   email: string;

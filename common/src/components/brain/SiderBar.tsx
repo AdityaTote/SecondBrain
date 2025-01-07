@@ -6,8 +6,8 @@ import MenuIcon from "@/icons/MenuIcon";
 import { useState } from "react";
 import AllContentIcon from "@/icons/AllContentIcon";
 import MiniMenuIcon from "@/icons/MiniMenuIcons";
-import SideComponent from "./ui/SideComponent";
-import MiniSideBarComponent from "./ui/MiniSideBarComponent";
+import SideComponent from "../ui/SideComponent";
+import MiniSideBarComponent from "../ui/MiniSideBarComponent";
 import BrainIcon from "@/icons/BrainIcon";
 
 export default function SiderBar() {
