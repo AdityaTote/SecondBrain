@@ -7,16 +7,35 @@ interface BrainHeaderBtnContextType {
   setIsAddContentBtnClicked: (value: boolean) => void;
 }
 
-export const BrainHeaderBtnCtx = createContext<BrainHeaderBtnContextType>({} as BrainHeaderBtnContextType);
+export const BrainHeaderBtnCtx = createContext<BrainHeaderBtnContextType>({
+    isShareBtnClicked: false,
+    setIsShareBtnClicked: () => {},
+    isAddContentBtnClicked: false,
+    setIsAddContentBtnClicked: () => {},
+});
 
-export default function BrainHeaderBtnContext({ children }: { children: React.ReactNode }) {
-    const [isShareBtnClicked, setIsShareBtnClicked] = useState(false);
-    const [isAddContentBtnClicked, setIsAddContentBtnClicked] = useState(false);
+export default function BrainHeaderBtnContext({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [isShareBtnClicked, setIsShareBtnClicked] = useState<boolean>(false);
+  const [isAddContentBtnClicked, setIsAddContentBtnClicked] =
+    useState<boolean>(false);
 
-    return(
-        <BrainHeaderBtnCtx.Provider value={{isShareBtnClicked, setIsShareBtnClicked, isAddContentBtnClicked, setIsAddContentBtnClicked}}>
-            {children}
-        </BrainHeaderBtnCtx.Provider>
-    )
+    console.log("isShareBtnClicked: ", isShareBtnClicked);
+    console.log("isAddContentBtnClicked: ", isAddContentBtnClicked);
 
+  return (
+    <BrainHeaderBtnCtx.Provider
+      value={{
+        isShareBtnClicked,
+        setIsShareBtnClicked,
+        isAddContentBtnClicked,
+        setIsAddContentBtnClicked,
+      }}
+    >
+      {children}
+    </BrainHeaderBtnCtx.Provider>
+  );
 }

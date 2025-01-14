@@ -1,13 +1,11 @@
+"use client";
 import ShareIcon from "@/icons/ShareIcon";
 import { Button } from "../ui/Button";
-import { BrainHeaderBtnCtx } from "@/contexts/BrainHeaderBtnContext";
-import { useContext } from "react";
+import { shareBtnStore } from "@/store/store";
 
 export default function ShareBtn() {
-  const { setIsShareBtnClicked } = useContext(BrainHeaderBtnCtx);
-  const handleShareToggle = () => {
-    setIsShareBtnClicked(true);
-  }
+    const handleShareToggle = shareBtnStore((state) => state.toggle)  
+  
   return (
     <Button
       variant={"secondary"}

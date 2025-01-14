@@ -69,6 +69,7 @@ export default function ContentCard({
         )}
         <div className="flex gap-2 pt-3">
           {tags.map(async (data, index) => {
+            // @ts-ignore
             const tag = await getTagTitle(data.$oid);
             return <Tags key={index} text={tag} />;
           })}

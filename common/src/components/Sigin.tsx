@@ -73,12 +73,14 @@ export default function Signin() {
             label="Username"
             type="text"
             placeholder="e.g: JohnDoe"
+            required={true}
             refs={usernameRef}
             onChange={checkFieldsValidity}
           />
           <Input
             label="Email"
             type="email"
+            required={true}
             placeholder="e.g: johndoe@example.com"
             refs={emailRef}
             onChange={checkFieldsValidity}
@@ -87,6 +89,7 @@ export default function Signin() {
             label="Password"
             type="password"
             placeholder="********"
+            required={true}
             refs={passRef}
             onChange={checkFieldsValidity}
           />

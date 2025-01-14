@@ -1,26 +1,59 @@
 "use client";
+import React from "react";
 import TwitterIcon from "@/icons/TwitterIcon";
 import YoutubeIcon from "@/icons/YoutubeIcon";
 import HashTagIcon from "@/icons/HashTagIcon";
 import MenuIcon from "@/icons/MenuIcon";
-import { useState } from "react";
 import AllContentIcon from "@/icons/AllContentIcon";
 import MiniMenuIcon from "@/icons/MiniMenuIcons";
 import SideComponent from "../ui/SideComponent";
-import MiniSideBarComponent from "../ui/MiniSideBarComponent";
 import BrainIcon from "@/icons/BrainIcon";
+import { slideStore } from "@/store/store";
 
 export default function SiderBar() {
-  const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const menuOpen = slideStore((state) => state.value);
+  const handleMenu = slideStore((state) => state.toggle);
+  // const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
-  const handleMenu = () => {
-    setMenuOpen(!menuOpen);
+  const siderBarComp = {
+    maxiSideBar: [
+      {
+        text: "All Content",
+        icon: <AllContentIcon />,
+      },
+      {
+        text: "Twitter",
+        icon: <TwitterIcon />,
+      },
+      {
+        text: "Youtube",
+        icon: <YoutubeIcon />,
+      },
+      {
+        text: "Hash Tag",
+        icon: <HashTagIcon />,
+      },
+    ],
+    minSiderBar: [
+      {
+        icon: <AllContentIcon />,
+      },
+      {
+        icon: <TwitterIcon />,
+      },
+      {
+        icon: <YoutubeIcon />,
+      },
+      {
+        icon: <HashTagIcon />,
+      },
+    ],
   };
 
   return (
     <div>
-      {menuOpen ? (
-        <div className="w-64 h-screen bg-white transition-all duration-500">
+      {menuOpen === true ? (
+        <div className="w-52 h-screen bg-white transition-all duration-500">
           <div className="flex justify-center pt-4 text-purple-500 gap-2">
             <BrainIcon />
             <h1 className="text-xl font-semibold"> SecondBrain </h1>
@@ -29,13 +62,12 @@ export default function SiderBar() {
             <button onClick={handleMenu}>
               <MenuIcon />
             </button>
-            <div className="text-2xl font-bold text-center py-1 px-4">Menu</div>
+            <div className="text-2xl font-bold text-center py-2 px-6">Menu</div>
           </div>
           <div>
-            <SideComponent text="All Content" Icon={<AllContentIcon />} />
-            <SideComponent text="Twitter" Icon={<TwitterIcon />} />
-            <SideComponent text="Youtube" Icon={<YoutubeIcon />} />
-            <SideComponent text="Hast Tag" Icon={<HashTagIcon />} />
+            {siderBarComp.maxiSideBar.map((item, index) => (
+              <SideComponent key={index} text={item.text} Icon={item.icon} />
+            ))}
           </div>
         </div>
       ) : (
@@ -50,11 +82,10 @@ export default function SiderBar() {
               <MiniMenuIcon />
             </button>
           </div>
-          <div className="pt-4">
-            <MiniSideBarComponent Icon={<AllContentIcon />} />
-            <MiniSideBarComponent Icon={<TwitterIcon />} />
-            <MiniSideBarComponent Icon={<YoutubeIcon />} />
-            <MiniSideBarComponent Icon={<HashTagIcon />} />
+          <div className="pt-6">
+            {siderBarComp.minSiderBar.map((item, index) => (
+              <SideComponent key={index} Icon={item.icon} />
+            ))}
           </div>
         </div>
       )}

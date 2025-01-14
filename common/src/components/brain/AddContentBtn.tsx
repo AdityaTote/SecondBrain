@@ -1,13 +1,11 @@
+"use client";
 import PlusIcon from "@/icons/PlusIcon";
 import { Button } from "../ui/Button";
-import { BrainHeaderBtnCtx } from "@/contexts/BrainHeaderBtnContext";
-import { useContext } from "react";
+import { addBtnStore } from "@/store/store";
+
 
 export default function AddContentBtn() {
-    const { setIsAddContentBtnClicked } = useContext(BrainHeaderBtnCtx);
-    const handleAddContentToggle = () => {
-        setIsAddContentBtnClicked(true);
-    }
+  const handleAddContentToggle = addBtnStore((state) => state.toggle)  
   return (
     <Button
       variant={"default"}
