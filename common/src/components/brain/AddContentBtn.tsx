@@ -5,7 +5,7 @@ import { addBtnStore } from "@/store/store";
 
 
 export default function AddContentBtn() {
-  const handleAddContentToggle = addBtnStore((state) => state.toggle)  
+  const handleAddContentToggle = addBtnStore((state) => state.open)  
   return (
     <Button
       variant={"default"}

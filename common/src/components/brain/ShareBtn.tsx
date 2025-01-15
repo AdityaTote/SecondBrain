@@ -4,7 +4,7 @@ import { Button } from "../ui/Button";
 import { shareBtnStore } from "@/store/store";
 
 export default function ShareBtn() {
-    const handleShareToggle = shareBtnStore((state) => state.toggle)  
+    const handleShareToggle = shareBtnStore((state) => state.open)  
   
   return (
     <Button

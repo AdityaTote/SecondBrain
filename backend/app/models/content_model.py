@@ -8,6 +8,7 @@ class Types(Enum):
     YOUTUBE = "youtube"
     TWITTER = "twitter"
     INSTAGRAM = "instagram"
+    OTHER = "other"
 
 class Content(BaseDocument):
     title = StringField(min_length=1, max_length=100, required=True)

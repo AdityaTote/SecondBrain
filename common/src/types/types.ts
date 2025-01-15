@@ -1,4 +1,6 @@
 import { DefaultSession } from "next-auth";
+import { contentSchema } from "./schema";
+import { z } from "zod";
 
 export interface UserType {
   id: string;
@@ -41,3 +43,5 @@ export interface BrainContent {
     $date: string;
   }
 }
+
+export type ContentType = z.infer<typeof contentSchema>

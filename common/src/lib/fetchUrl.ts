@@ -1,10 +1,16 @@
 import axios from "axios"
 
-export async function fetchUrl({url, userId}: {url: string, userId: string}) {
+interface fetchUrlProps {
+    url: string;
+    token: string
+}
+
+export async function fetchUrl({url, token}: fetchUrlProps) {
     const res = await axios.get(url,{
-        data: {
-            userId: userId
+        headers: {
+            "Content-Type": "application/json",
+            "token": token
         }
     })
-    return res.data.data
+    return res
 }

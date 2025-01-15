@@ -1,12 +1,16 @@
 "use client";
+
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Button } from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import GoogleIcon from "@/icons/GoogleIcon";
-import { useRef, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import LoadingIcon from "@/icons/LoadingIcon";
+import { userSchema } from "@/types/schema";
 
 export default function Signin() {
   const router = useRouter();
@@ -24,17 +28,27 @@ export default function Signin() {
     setIsValid(!!(username && email && password));
   };
 
+  const successNotify = (msg: string) => toast.success(msg,{ autoClose: 1000})
+  const errorNotify = (msg: string) => toast.error(msg,{ autoClose: 2000})
+
   const handleSignUp = async () => {
     setButtonLoadingCred(true);
-    const username = usernameRef.current?.value;
-    const email = emailRef.current?.value;
-    const password = passRef.current?.value;
 
-    if (!username || !email || !password) {
-      alert("Please fill all the fields");
+    const userInput = {
+      username: usernameRef.current?.value.trim(),
+      email:  emailRef.current?.value.trim(),
+      password: passRef.current?.value.trim(),
+    }
+
+    const userData = userSchema.safeParse(userInput)
+
+    if(!userData.success){
       setButtonLoadingCred(false);
+      errorNotify(userData.error.errors[0].message)
       return;
     }
+
+    const { username, email, password  } = userData.data;
 
     const res = await signIn("credentials", {
       username,
@@ -42,11 +56,18 @@ export default function Signin() {
       password,
       redirect: false,
     });
+    
+    if(res?.error === "Email is already taken"){
+      errorNotify(res?.error)
+    }
 
     if (!res?.error) {
       setButtonLoadingCred(false);
       router.push("/brain");
     }
+
+    successNotify("Sign in successful")
+
   };
 
   const handleGoogleSignin = async () => {
@@ -55,10 +76,11 @@ export default function Signin() {
 
     if (!res?.error) {
       setButtonLoadingGoogle(false);
+      successNotify("sign-in successful")
       router.push("/brain");
     } else {
       setButtonLoadingGoogle(false);
-      alert("Google sign-in failed");
+      errorNotify("Google sign-in failed");
     }
   };
 
@@ -134,6 +156,7 @@ export default function Signin() {
           )}
         </div>
       </Card>
+      <ToastContainer position="top-right" limit={2} />
     </div>
   );
 }
