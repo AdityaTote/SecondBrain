@@ -14,21 +14,24 @@ def content():
 
         if not user_id:
             return jsonify({
-                'error': 'User ID is required',
-                'message': 'Please provide a user_id in the request'
+                'error': True,
+                'message': 'User Is unauthorized',
+                'data': None
             }), 400
         
         try:
             content = ContentService.get_content_by_user_id(user_id=user_id)
 
             return jsonify({
+                'error': False,
                 'message': 'Content retrieved successfully',
                 'data': content
             }),200
         except Exception as e:
             return jsonify({
-                'error': str(e),
-                'message': 'An error occurred while retrieving content'
+                'error': True,
+                'message': 'An error occurred while retrieving content',
+                'data': None
                 }), 400
 
     if request.method == 'POST':
@@ -36,8 +39,9 @@ def content():
 
         if not user_id:
             return jsonify({
-                'error': 'User ID is required',
-                'message': 'Please provide a user_id in the request'
+                'error': True,
+                'message': 'Please provide a user_id in the request',
+                'data': None
             }), 400
 
         title = request.json["title"]
@@ -47,8 +51,9 @@ def content():
 
         if not title or not types or not tags or not link:
             return jsonify({
-                'error': 'Missing required fields',
-                'message': 'Please provide title, types and tags in the request'
+                'error': True,
+                'message': 'Please provide title, types and tags in the request',
+                'data': None
             }), 400
         
         tag_ids = []
@@ -72,7 +77,9 @@ def content():
                 link=link
                 )
             return jsonify({
+                'error': False,
                 'message': 'Content created successfully',
+                'data': None
             }), 203
         except Exception as e:
             return jsonify({'error': str(e)}), 400
@@ -82,31 +89,37 @@ def content():
 
         if not user_id:
             return jsonify({
-                'error': 'User ID is required',
-                'message': 'Please provide a user_id in the request'
+                'error': False,
+                'message': 'Please provide a user_id in the request',
+                'data': None
             }), 400
         
         content_id = request.json["content_id"]
 
         if not content_id:
             return jsonify({
-                'error': 'Content ID is required',
-                'message': 'Please provide a content_id in the request'
+                'error': False,
+                'message': 'Please provide a content_id in the request',
+                'data': None
             }), 400
         
         try:
             content = ContentService.get_content_by_id_and_user_id(content_id, user_id)
             if not content:
                 return jsonify({
-                    'error': 'Content not found',
-                    'message': 'The content_id provided does not exist'
+                    'error': True,
+                    'message': 'The content_id provided does not exist',
+                    'data': None
                 }), 404
             ContentService.delete_content(content_id)
             return jsonify({
-                'message': 'Content deleted successfully'
+                'error': False,
+                'message': 'Content deleted successfully',
+                'data': None
             }),203
         except Exception as e:
-            return jsonify({'error': str(e)}), 400
+            print({'error': str(e)})
+            return
 
 
 @content_bp.route("/check", methods=["GET"])
@@ -114,6 +127,7 @@ def content():
 def check():
     data = g.user_id
     return jsonify({
+        'error': False,
         'message': 'User is authenticated',
         'data': data
     })
