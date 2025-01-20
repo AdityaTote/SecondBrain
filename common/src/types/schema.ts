@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+
 export const userSchema = z.object({
     username: z.string({message: "Username is required"}).min(3, {message: "Username must be at least 3 characters long"}),
     email: z.string().email({message: "Invalid email address"}),
@@ -7,8 +8,8 @@ export const userSchema = z.object({
 })
 
 export const contentSchema = z.object({
-    titel: z.string({message: "Title is required"}).min(3, {message: "Title must be at least 3 characters long"}),
+    title: z.string({message: "Title is required"}).min(3, {message: "Title must be at least 3 characters long"}),
     link: z.string({message: "Link is required"}).url({message: "Invalid URL"}),
-    tags: z.array(z.string()).nonempty({message: "Tags are required"}),
-    types: z.enum(["youtube", "twitter", "instagram", "other"])
+    tags: z.string().nonempty({message: "Tags are required"}),
+    types: z.enum(["youtube", "twitter", "instagram", "other"], {message: "Invalid type"})
 })

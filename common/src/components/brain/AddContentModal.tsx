@@ -1,44 +1,72 @@
 "use client";
 import { useRef, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import Input from "../ui/Input";
 import { typeStore } from "@/store/store";
 import { Button } from "../ui/Button";
 import { contentSchema } from "@/types/schema";
-import { toast } from "react-toastify";
-import { postUrl } from "@/lib/postUrl";
+// import { postUrl } from "@/lib/postUrl";
 import { UserType } from "@/types/types";
+import LoadingIcon from "@/icons/LoadingIcon";
+import axios from "axios";
 
-export default function AddContentModal({user}: {user: UserType}) {
+export default function AddContentModal({ user }: { user: UserType }) {
   const titleRef = useRef<HTMLInputElement>(null);
   const linkRef = useRef<HTMLInputElement>(null);
   const tagsRef = useRef<HTMLInputElement>(null);
   const types = typeStore((state) => state.value);
   const [loading, setLoading] = useState<boolean>(false);
+  console.log(tagsRef.current?.value)
 
-  const successNotify = (msg: string) => toast.success(msg,{ autoClose: 1000})
-    const errorNotify = (msg: string) => toast.error(msg,{ autoClose: 2000})
+  const successNotify = (msg: string) =>
+    toast.success(msg, { autoClose: 1000 });
+  const errorNotify = (msg: string) => toast.error(msg, { autoClose: 2000 });
 
-  const handleAddContent = async() => {
+  const handleAddContent = async () => {
     setLoading(true);
     const data = {
-        title: titleRef.current?.value.trim(),
-        link: linkRef.current?.value.trim(),
-        tags: tagsRef.current?.value.trim().split(","),
-        type: types
-    }
+      title: titleRef.current?.value.trim(),
+      link: linkRef.current?.value.trim(),
+      tags: tagsRef.current?.value.trim(),
+      types: types,
+    };
+    console.log(data)
     const contentData = contentSchema.safeParse(data);
 
-    if(!contentData.success){
-        setLoading(false)
-        errorNotify(contentData.error.errors[0].message)
-        return;        
+    if (!contentData.success) {
+      errorNotify(contentData.error.errors[0].message);
+      setLoading(false);
+      return;
     }
 
-    const res = await postUrl({url: "http://localhost:8080/content", token: user?.token, data: contentData.data});
+    console.log(user?.token);
 
-    if(res.)
+    const res = await axios.post("http://127.0.0.1:8000/api/content",contentData.data,{
+      headers: {
+        Authorization: `Bearer ${user?.token}`,
+      }
+    });
 
-  }
+    console.log("res: ",res)
+    console.log("resDAta: ",res.data)
+
+    if(!res){
+      setLoading(false)
+      errorNotify("Server Error is busy")
+    }
+
+    if (res.data.error === true) {
+      setLoading(false);
+      errorNotify(res.data.message);
+      return;
+    }
+
+    if (res.data.error === false) {
+      setLoading(false);
+      successNotify(res.data.message);
+      return;
+    }
+  };
 
   return (
     <div className="flex flex-col gap-2 transition-all duration-1000">
@@ -68,8 +96,20 @@ export default function AddContentModal({user}: {user: UserType}) {
         />
       </div>
       <div className="flex justify-center items-center pt-2 pb-1">
-        <Button variant={"default"} onClick={handleAddContent} >Add Content</Button>
+        {loading ? (
+          <Button className="p-4 flex justify-center items-center" disabled>
+            <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+              <LoadingIcon />
+            </svg>
+            Submitting Your Content...
+          </Button>
+        ) : (
+          <Button variant={"default"} onClick={handleAddContent}>
+            Add Content
+          </Button>
+        )}
       </div>
+      <ToastContainer position="bottom-right" limit={2} />
     </div>
   );
 }

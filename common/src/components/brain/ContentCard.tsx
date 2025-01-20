@@ -11,8 +11,13 @@ interface ContentProp {
   title: string;
   link: string;
   type: "youtube" | "twitter";
-  tags: string[];
+  tags: { $oid: { $oid: string } }[];
   date: string;
+}
+
+async function getTitle(id: string) {
+  const tag = await getTagTitle(id);
+  return tag
 }
 
 export default function ContentCard({
@@ -28,7 +33,7 @@ export default function ContentCard({
   const year = strToDate.getUTCFullYear();
   const formatedDate = `${day}/${month}/${year}`;
   return (
-    <Card className="p-2 rounded-lg max-w-72  border min-h-48 min-w-72">
+    <Card className="p-2 rounded-lg max-w-72  border min-h-48 min-w-72 w-full">
       <div className="flex items-center justify-between gap-8">
         <div className="flex gap-2 items-center">
           <YoutubeIcon />
@@ -69,8 +74,9 @@ export default function ContentCard({
         )}
         <div className="flex gap-2 pt-3">
           {tags.map(async (data, index) => {
-            // @ts-ignore
-            const tag = await getTagTitle(data.$oid);
+            console.log("data: ",data)
+            const id = String(data.$oid.$oid);
+            const tag = await getTitle(id);
             return <Tags key={index} text={tag} />;
           })}
         </div>

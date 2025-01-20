@@ -44,10 +44,10 @@ def content():
                 'data': None
             }), 400
 
-        title = request.json["title"]
+        title: str = request.json["title"]
         types = request.json["types"]
-        tags = request.json["tags"]
-        link = request.json["link"]
+        tags: str = request.json["tags"]
+        link: str = request.json["link"]
 
         if not title or not types or not tags or not link:
             return jsonify({
@@ -57,16 +57,24 @@ def content():
             }), 400
         
         tag_ids = []
-        tag_id = tags.split(",")
-
-        for tag in tag_id:
-            t = tag.strip()
-            present_tag_id = TagsService.get_tag_by_title(t)
+        if tags.find(',') == -1:
+            present_tag_id = TagsService.get_tag_by_title(tags)
             if present_tag_id:
                 tag_ids.append(present_tag_id.id)
             else:
-                tags_id= TagsService.create_tag(t)
+                tags_id = TagsService.create_tag(tags)
                 tag_ids.append(tags_id.id)
+        else:
+            tag_id = tags.split(",")
+
+            for tag in tag_id:
+                t = tag.strip()
+                present_tag_id = TagsService.get_tag_by_title(t)
+                if present_tag_id:
+                    tag_ids.append(present_tag_id.id)
+                else:
+                    tags_id= TagsService.create_tag(t)
+                    tag_ids.append(tags_id.id)
         
         try:
             content = ContentService.create_content(

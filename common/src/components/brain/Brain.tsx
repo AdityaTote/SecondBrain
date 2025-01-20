@@ -1,7 +1,6 @@
-import { fetchBrain } from "@/lib/fetchData";
-import SiderBar from "./SiderBar";
-import { BrainContent, SessionType } from "@/types/types";
 import { getServerSession } from "next-auth";
+import { fetchBrain } from "@/lib/fetchData";
+import { BrainContent, SessionType } from "@/types/types";
 import { authOptions } from "@/lib/auth";
 import BrainData from "./BrainData";
 
@@ -30,14 +29,9 @@ export default async function Brain() {
 
   if (error === true && data === null) {
     return (
-      <div className="bg-gray-100 h-screen w-screen">
-        <div className="fixed top-0 left-0">
-          <SiderBar />
-        </div>
         <div className="pl-14 pt-6 flex">
           <h1>{message}</h1>
         </div>
-      </div>
     );
   }
 

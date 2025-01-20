@@ -32,8 +32,9 @@ def auth(f: Callable) -> Callable:
 
         if not auth_header or not auth_header.startswith('Bearer '):
             return jsonify({
-                'error': 'Unauthorized',
-                'message': 'Token not provided or invalid format'
+                'error': True,
+                'message': 'Token not provided or invalid format',
+                'data': None
             }), 401
         
         token = auth_header[7:]

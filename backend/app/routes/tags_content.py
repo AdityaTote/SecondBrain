@@ -3,11 +3,9 @@ from app.service.tags_service import TagsService
 
 tags_content_bp = Blueprint("tags", __name__)
 
-@tags_content_bp.route("/", methods=["POST"])
-def tags_content():
-    if request.method == "POST":
-        
-        tag_id = request.json["tag_id"]
+@tags_content_bp.route("/<tag_id>", methods=["GET"])
+def tags_content(tag_id):
+    if request.method == "GET":
         
         if not tag_id:
             return jsonify({"error": False, "message": "Please provide a tag_id in the request", 'data': None}), 400
