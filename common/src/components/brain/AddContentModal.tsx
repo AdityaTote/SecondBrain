@@ -2,21 +2,24 @@
 import { useRef, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Input from "../ui/Input";
-import { typeStore } from "@/store/store";
+import { addBtnStore, typeStore } from "@/store/store";
 import { Button } from "../ui/Button";
 import { contentSchema } from "@/types/schema";
 // import { postUrl } from "@/lib/postUrl";
 import { UserType } from "@/types/types";
 import LoadingIcon from "@/icons/LoadingIcon";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function AddContentModal({ user }: { user: UserType }) {
+  const router = useRouter();
+  const handleAddBtnClose = addBtnStore((state) => state.close);
   const titleRef = useRef<HTMLInputElement>(null);
   const linkRef = useRef<HTMLInputElement>(null);
   const tagsRef = useRef<HTMLInputElement>(null);
   const types = typeStore((state) => state.value);
   const [loading, setLoading] = useState<boolean>(false);
-  console.log(tagsRef.current?.value)
+  console.log(tagsRef.current?.value);
 
   const successNotify = (msg: string) =>
     toast.success(msg, { autoClose: 1000 });
@@ -30,7 +33,7 @@ export default function AddContentModal({ user }: { user: UserType }) {
       tags: tagsRef.current?.value.trim(),
       types: types,
     };
-    console.log(data)
+    console.log(data);
     const contentData = contentSchema.safeParse(data);
 
     if (!contentData.success) {
@@ -41,18 +44,22 @@ export default function AddContentModal({ user }: { user: UserType }) {
 
     console.log(user?.token);
 
-    const res = await axios.post("http://127.0.0.1:8000/api/content",contentData.data,{
-      headers: {
-        Authorization: `Bearer ${user?.token}`,
+    const res = await axios.post(
+      "http://127.0.0.1:8000/api/content",
+      contentData.data,
+      {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
       }
-    });
+    );
 
-    console.log("res: ",res)
-    console.log("resDAta: ",res.data)
+    console.log("res: ", res);
+    console.log("resDAta: ", res.data);
 
-    if(!res){
-      setLoading(false)
-      errorNotify("Server Error is busy")
+    if (!res) {
+      setLoading(false);
+      errorNotify("Server Error is busy");
     }
 
     if (res.data.error === true) {
@@ -64,16 +71,20 @@ export default function AddContentModal({ user }: { user: UserType }) {
     if (res.data.error === false) {
       setLoading(false);
       successNotify(res.data.message);
+      router.push("/brain");
+      if (handleAddBtnClose) {
+        handleAddBtnClose();
+      }
       return;
     }
   };
 
   return (
-    <div className="flex flex-col gap-2 transition-all duration-1000">
+    <div className="grid grid-cols-1 gap-2 transition-all duration-1000">
       <Input
         label="Title"
         refs={titleRef}
-        placeholder="Enter the title.."
+        placeholder="enter the title.."
         required={true}
         type="text"
       />
@@ -84,18 +95,21 @@ export default function AddContentModal({ user }: { user: UserType }) {
         required={true}
         type="text"
       />
-      <div className="flex flex-flow-col justify-evenly items-center pt-2 gap-2">
+      <div className="grid justify-evenly items-center pt-2 grid-cols-1 lg:flex lg:items-center lg:justify-evenly gap-2">
         <TypeDropDown />
         <Input
           variant="primary"
           label="Tags"
           refs={tagsRef}
-          placeholder="Enter the title.."
+          placeholder="e.g. #trending"
           required={true}
           type="text"
         />
       </div>
-      <div className="flex justify-center items-center pt-2 pb-1">
+      <div className="flex justify-center items-center pt-2 pb-1 gap-4">
+        <Button variant={"destructive"} onClick={handleAddBtnClose}>
+          Cancel
+        </Button>
         {loading ? (
           <Button className="p-4 flex justify-center items-center" disabled>
             <svg className="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">

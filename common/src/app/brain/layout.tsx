@@ -8,9 +8,9 @@ interface BrainLayoutProps {
 export default function BrainLayout({ children }: BrainLayoutProps) {
   return (
     <>
-      <div className="flex h-screen">
+      <div className="flex h-full">
         <SiderBar />
-        <div className="flex-1 bg-gray-100">
+        <div className="flex-1 bg-gray-100 h-full">
           {children}
           <Script
             src="https://platform.twitter.com/widgets.js"

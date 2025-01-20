@@ -8,6 +8,7 @@ interface InputProps {
   refs: React.RefObject<HTMLInputElement | null>;
 }
 
+
 export default function Input({
   label,
   type,
@@ -28,7 +29,7 @@ export default function Input({
               placeholder={placeholder}
               ref={refs}
               onChange={onChange}
-              className="border border-gray-300 p-2 rounded-md mt-1 flex items-center"
+              className="border border-gray-300 p-2 rounded-md mt-1 flex items-center w-full"
             />
           )}
         </div>
@@ -40,7 +41,7 @@ export default function Input({
               type={type}
               placeholder={placeholder}
               ref={refs}
-              className="border border-gray-300 p-2 rounded-md mt-1 flex items-center"
+              className="border border-gray-300 p-2 rounded-md mt-1 flex items-center w-full"
             />
           )}
         </div>
