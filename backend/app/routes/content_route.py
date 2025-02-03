@@ -45,11 +45,12 @@ def content():
             }), 400
 
         title: str = request.json["title"]
+        description: str = request.json["description"]
         types = request.json["types"]
         tags: str = request.json["tags"]
         link: str = request.json["link"]
 
-        if not title or not types or not tags or not link:
+        if not title or not types or not tags or not link or not description:
             return jsonify({
                 'error': True,
                 'message': 'Please provide title, types and tags in the request',
@@ -79,6 +80,7 @@ def content():
         try:
             content = ContentService.create_content(
                 title=title,
+                description=description,
                 types=types,
                 tags=tag_ids,
                 user_id=user_id,
@@ -128,14 +130,3 @@ def content():
         except Exception as e:
             print({'error': str(e)})
             return
-
-
-@content_bp.route("/check", methods=["GET"])
-@auth
-def check():
-    data = g.user_id
-    return jsonify({
-        'error': False,
-        'message': 'User is authenticated',
-        'data': data
-    })

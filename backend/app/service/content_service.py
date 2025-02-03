@@ -4,12 +4,13 @@ from app.models.content_model import Types
 class ContentService:
 
     @staticmethod
-    def create_content(title, types, tags, user_id, link):
+    def create_content(title, description, types, tags, user_id, link):
 
 
         if link:
             content = Content(
             title=title,
+            description=description,
             link=link,
             types=types,
             tags=tags,

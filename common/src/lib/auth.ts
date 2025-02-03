@@ -4,7 +4,7 @@ import type { NextAuthOptions } from "next-auth";
 import { dbConnect } from "@/db";
 import { compareHashPass, genHashPass } from "@/utils/hashPass";
 import { User } from "@/db/user.model";
-import { loginSchema } from "./schema";
+import { userSchema } from "@/types/schema";
 import { generateJWT } from "@/utils/jwt";
 
 function randomStringGen(length: number) {
@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         try {
           await dbConnect();
-          const cred = loginSchema.safeParse(credentials);
+          const cred = userSchema.safeParse(credentials);
 
           if (!cred.success) {
             return null;

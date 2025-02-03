@@ -12,6 +12,7 @@ class Types(Enum):
 
 class Content(BaseDocument):
     title = StringField(min_length=1, max_length=100, required=True)
+    description = StringField(min_length=1, max_length=800)
     link = StringField(min_length=1, max_length=200)
     types = EnumField(Types, required=True)
     tags = ListField(ReferenceField(Tags, required=True))
