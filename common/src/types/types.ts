@@ -28,13 +28,12 @@ export type SessionType = Session | null;
 
 export interface BrainContent {
   _id: {
-    // @ts-ignore
-    $oid: string | any
+    $oid: string
   };
   title: string;
   link: string;
   types: "youtube" | "twitter";
-  tags: string[];
+  tags: [{ $oid: string }];
   user_id: string;
   created_at: {
     $date: string
