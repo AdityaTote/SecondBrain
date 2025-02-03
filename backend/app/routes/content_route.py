@@ -130,3 +130,37 @@ def content():
         except Exception as e:
             print({'error': str(e)})
             return
+
+@content_bp.route('/<int:content_id>', methods=['GET', 'PUT'])
+@auth
+def content_by_id(content_id):
+    if request.method == 'GET':
+        user_id = g.user_id
+
+        if not user_id:
+            return jsonify({
+                'error': True,
+                'message': 'User Is unauthorized',
+                'data': None
+            }), 400
+        
+        try:
+            content = ContentService.get_content_by_id_and_user_id(content_id, user_id)
+            if not content:
+                return jsonify({
+                    'error': True,
+                    'message': 'The content_id provided does not exist',
+                    'data': None
+                }), 404
+            return jsonify({
+                'error': False,
+                'message': 'Content retrieved successfully',
+                'data': content
+            }), 200
+        except Exception as e:
+            print({'error': str(e)})
+            return jsonify({
+                'error': True,
+                'message': 'An error occurred while retrieving content',
+                'data': None
+            }), 400

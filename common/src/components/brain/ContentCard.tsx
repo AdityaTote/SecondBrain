@@ -4,26 +4,20 @@ import BinIcon from "@/icons/BinIcon";
 import YoutubeIcon from "@/icons/YoutubeIcon";
 import Tags from "../ui/Tags";
 import Link from "next/link";
-import { getTagTitle } from "@/lib/fetchData";
+import { getTitle } from "@/lib/getCustomData";
 
 interface ContentProp {
   id: string;
   title: string;
-  link: string;
-  type: "youtube" | "twitter";
+  description: string;
   tags: { $oid: { $oid: string } }[];
   date: string;
 }
 
-async function getTitle(id: string) {
-  const tag = await getTagTitle(id);
-  return tag;
-}
-
 export default function ContentCard({
+  id,
   title,
-  link,
-  type,
+  description,
   tags,
   date,
 }: ContentProp) {
@@ -32,6 +26,13 @@ export default function ContentCard({
   const month = String(strToDate.getUTCMonth() + 1).padStart(2, "0");
   const year = strToDate.getUTCFullYear();
   const formatedDate = `${day}/${month}/${year}`;
+
+  function shortDescription(description: string) {
+    if(description.length > 100) {
+      return description.slice(0, 100-3) + "...";
+    }
+    return description;
+  }
   
   return (
     <Card className="rounded-lg  border overflow-hidden">
@@ -42,7 +43,7 @@ export default function ContentCard({
             <h1 className="truncate">{title}</h1>
           </div>
           <div className="flex gap-2 shrink-0">
-            <Link href={link} replace legacyBehavior>
+            <Link href={`/brain/${id}`} replace legacyBehavior>
               <a target="_blank">
                 <ShareIcon />
               </a>
@@ -53,27 +54,9 @@ export default function ContentCard({
           </div>
         </div>
         <div className="pt-4">
-          {type === "youtube" && (
-            <iframe
-              className="w-full aspect-video rounded-md"
-              src={`https://www.youtube.com/embed/${
-                link.match(
-                  /(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/))([a-zA-Z0-9_-]{11})/
-                )?.[1]
-              }`}
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
-          )}
-
-          {type === "twitter" && (
-            <blockquote className="twitter-tweet">
-              <a href={link.replace("x", "twitter")}></a>
-            </blockquote>
-          )}
+          <div className="text-">
+            <p>{shortDescription(description)}</p>
+          </div>
           <div className="flex flex-wrap gap-2 pt-3">
             {tags.map(async (data, index) => {
               const id = String(data.$oid.$oid);

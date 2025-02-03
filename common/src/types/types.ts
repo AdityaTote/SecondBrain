@@ -31,6 +31,7 @@ export interface BrainContent {
     $oid: string
   };
   title: string;
+  description: string;
   link: string;
   types: "youtube" | "twitter";
   tags: [{ $oid: string }];
@@ -42,5 +43,7 @@ export interface BrainContent {
     $date: string;
   }
 }
+
+
 
 export type ContentType = z.infer<typeof contentSchema>

@@ -1,13 +1,7 @@
-import { getServerSession } from "next-auth";
 import { fetchBrain } from "@/lib/fetchData";
-import { BrainContent, SessionType } from "@/types/types";
-import { authOptions } from "@/lib/auth";
+import { BrainContent } from "@/types/types";
 import BrainData from "./BrainData";
-
-const getUser = async () => {
-  const session: SessionType = await getServerSession(authOptions);
-  return session?.user;
-};
+import { getUser } from "@/lib/getCustomData";
 
 const getBrain = async () => {
   const user = await getUser();
@@ -29,9 +23,9 @@ export default async function Brain() {
 
   if (error === true && data === null) {
     return (
-        <div className="pl-14 pt-6 flex">
-          <h1>{message}</h1>
-        </div>
+      <div className="pl-14 pt-6 flex">
+        <h1>{message}</h1>
+      </div>
     );
   }
 
