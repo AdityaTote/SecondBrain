@@ -3,8 +3,11 @@ from app.service.tags_service import TagsService
 
 tags_content_bp = Blueprint("tags", __name__)
 
-@tags_content_bp.route("/<tag_id>", methods=["GET"])
+@tags_content_bp.route("/<tag_id>", methods=["GET", "OPTIONS"])
 def tags_content(tag_id):
+    if request.method == "OPTIONS":
+        return '', 200
+
     if request.method == "GET":
         
         if not tag_id:

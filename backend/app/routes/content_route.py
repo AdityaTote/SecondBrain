@@ -1,14 +1,19 @@
+from asyncio.log import logger
 from flask import Blueprint, request, jsonify, g
+from pydantic import ValidationError
 from app.middlewares.auth_middleware import auth
 from app.service.content_service import ContentService
 from app.service.tags_service import TagsService
-from app.models.user_model import User
+from app.schema.content_schema import ContentCreateRequest
 
 content_bp= Blueprint('content', __name__)
 
-@content_bp.route('/', methods=['GET', 'POST', 'DELETE'])
+@content_bp.route('/', methods=['GET', 'POST', 'DELETE', 'OPTIONS'])
 @auth
 def content():
+    if request.method == 'OPTIONS':
+        return '', 200
+
     if request.method == 'GET':
         user_id = g.user_id
 
@@ -28,6 +33,7 @@ def content():
                 'data': content
             }),200
         except Exception as e:
+            logger.error(f"Error retrieving content for user {user_id}: {e}")
             return jsonify({
                 'error': True,
                 'message': 'An error occurred while retrieving content',
@@ -44,11 +50,23 @@ def content():
                 'data': None
             }), 400
 
-        title: str = request.json["title"]
-        description: str = request.json["description"]
-        types = request.json["types"]
-        tags: str = request.json["tags"]
-        link: str = request.json["link"]
+       
+
+        try:
+            body = request.get_json(silent=True) or {}
+            payload = ContentCreateRequest(**body)
+        except ValidationError as e:
+            return jsonify({
+            'error': True,
+            'message': 'Invalid request body',
+            'data': e.errors()
+            }), 400
+
+        title: str = payload.title.strip()
+        description: str = payload.description.strip()
+        types = payload.types.strip()
+        tags: str = payload.tags.strip()
+        link: str = str(payload.link)
 
         if not title or not types or not tags or not link or not description:
             return jsonify({
@@ -104,7 +122,8 @@ def content():
                 'data': None
             }), 400
         
-        content_id = request.json["content_id"]
+        data = request.get_json(silent=True) or {}
+        content_id = data.get('content_id') or request.args.get('content_id')
 
         if not content_id:
             return jsonify({
@@ -131,9 +150,12 @@ def content():
             print({'error': str(e)})
             return
 
-@content_bp.route('/<int:content_id>', methods=['GET', 'PUT'])
+@content_bp.route('/<string:content_id>', methods=['GET', 'PUT', 'OPTIONS'])
 @auth
 def content_by_id(content_id):
+    if request.method == 'OPTIONS':
+        return '', 200
+
     if request.method == 'GET':
         user_id = g.user_id
 

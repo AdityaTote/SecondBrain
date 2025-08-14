@@ -10,7 +10,7 @@ interface JWTPayload {
 }
 
 export function generateJWT(payload: JWTPayload){
-    const secret = process.env.NEXTAUTH_SECRET || "secret";
+    const secret = process.env.JWT_SECRET || "secret";
     const token = sign(payload, secret, { algorithm: 'HS256' })
     return token;
 }

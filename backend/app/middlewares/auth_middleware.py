@@ -1,3 +1,4 @@
+from asyncio.log import logger
 import jwt
 import os
 from flask import request, jsonify, g
@@ -22,6 +23,7 @@ def check_user_exists(user_id: str) -> bool:
         UserService.get_user(user_id)
         return True
     except Exception as e:
+        logger.error(f"Error checking user existence: {e}")
         return False
 
 def auth(f: Callable) -> Callable:

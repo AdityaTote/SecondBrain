@@ -1,5 +1,5 @@
 "use client";
-import ShareBtn from "./ShareBtn";
+// import ShareBtn from "./ShareBtn";
 import AddContentBtn from "./AddContentBtn";
 
 export default function BrainHeader({ username }: { username: string }) {
@@ -10,7 +10,7 @@ export default function BrainHeader({ username }: { username: string }) {
         <span className="text-purple-500">SecondBrain</span>
       </h1>
       <div className="flex gap-4 p-4">
-        <ShareBtn  />
+        {/* <ShareBtn  /> */}
         <AddContentBtn />
       </div>
     </div>

@@ -17,7 +17,7 @@ export default function BrainHeaderComp({ user }: BrainHeaderCompProp) {
   const handleShareBtnClose = shareBtnStore((state) => state.close);
   return (
     <>
-      <SearchBox />
+      {/* <SearchBox /> */}
       <BrainHeader username={user?.username ?? "No One"} />
 
       {isAddContentBtnClicked && (
